@@ -12,7 +12,8 @@ module.exports = {
         changeOrigin: true
       }
     },
-    port: process.env.PORT || 3000
+    port: process.env.PORT || 3000,
+    inline: true
   },
   resolve: {
     alias: {
