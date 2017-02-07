@@ -11,7 +11,8 @@ module.exports = {
         secure: false,
         changeOrigin: true
       }
-    }
+    },
+    port: process.env.PORT || 3000
   },
   resolve: {
     alias: {
