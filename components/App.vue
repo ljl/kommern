@@ -1,11 +1,10 @@
 <template>
   <div class="app">
     <h1>Når kommer bussen a?!?</h1>
-      <select v-model="stopId">
-        <option v-for="option in options" :value="option.ID" :selected="option.ID === selectedRoute">
-          {{ option.Name }}
-        </option>
-      </select>
+      <dropdown
+        :options="options"
+        @select="setSelected">
+      </dropdown>
     <departures></departures>
     <!--routes></routes-->
   </div>
@@ -13,6 +12,7 @@
 
 <script>
 import Departures from './Departures.vue'
+import Dropdown from './Dropdown.vue'
 import Routes from './Routes.vue'
 import persistence from '../assets/js/persistence'
 
@@ -20,7 +20,8 @@ export default {
   name:'App',
   components: {
     Departures,
-    Routes
+    Routes,
+    Dropdown
   },
   data () {
     return {
@@ -32,9 +33,9 @@ export default {
     displayRoute({Name, ID }) {
       return `${Name} (${ID})`
     },
-    setSelected() {
-      persistence.set('stopId', this.stopId)
-      this.$router.replace({name: 'App', params: { stopId: this.stopId }})
+    setSelected (item) {
+      persistence.set('stopId', item.ID)
+      this.$router.replace({name: 'App', params: { stopId: item.ID }})
     }
   },
   watch: {
@@ -49,9 +50,6 @@ export default {
         arr.push(stop.Name)
       })
       this.options = json
-      if (persistence.get('stopId')) {
-        this.selectedRoute = persistence.get('stopId')
-      }
     })
   }
 }
