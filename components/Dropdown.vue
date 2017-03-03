@@ -77,6 +77,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: 'Roboto Slab', serif;
+}
 ul {
   list-style: none;
   margin: 0;
