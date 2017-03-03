@@ -1,9 +1,7 @@
-var path = require('path');
-
 module.exports = {
   entry: ['./main.js'],
   output: {
-    filename: path.resolve(__dirname, 'dist/pwa.bundle.js')
+    filename: 'dist/pwa.bundle.js'
   },
   devServer: {
     proxy: {
