@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "build": "webpack",
     "start": "webpack-dev-server",
     "dev": "webpack-dev-server --hot --open --host 0.0.0.0",
     "test": "echo \"Error: no test specified\" && exit 1"
