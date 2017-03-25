@@ -26,7 +26,8 @@ export default {
   data () {
     return {
       stopId: persistence.get('stopId'),
-      options: []
+      options: [],
+      worker: null
     }
   },
   methods: {

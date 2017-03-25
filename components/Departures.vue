@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="text" v-model="lineNumber" @input="fetchData" placeholder="Linje" />
+    <input type="text" v-model="lineNumber" placeholder="Linje" />
     <ul v-if="departures.length > 0">
       <li v-for="departure in departures">
         {{ departure.MonitoredVehicleJourney.LineRef }} til {{ departure.MonitoredVehicleJourney.DestinationName }} kommer
@@ -19,17 +19,19 @@
 <script>
 import persistence from '../assets/js/persistence'
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Departures',
   data () {
     return {
-      lineNumber: persistence.get('lineNumber'),
-      departures: []
+      lineNumber: persistence.get('lineNumber')
     }
   },
   computed: {
-
+    ...mapGetters({
+       departures: 'allDepartures'
+    })
   },
   filters: {
     dateTime (dt) {
@@ -37,31 +39,24 @@ export default {
     }
   },
   methods: {
-    fetchData () {
-      if (this.$route.params.stopId) {
-        let fetchUrl = `/api/StopVisit/GetDepartures/${this.$route.params.stopId}`
-        if (this.lineNumber) {
-          fetchUrl += '?linenames=' + this.lineNumber
-        }
-        fetch(fetchUrl).then((response) => {
-          return response.json()
-        }).then((json) => {
-          console.log('departures', json)
-          this.departures = json
-        })
-      }
-    }
   },
   watch: {
-    '$route.params.stopId': 'fetchData',
+    '$route.params.stopId': function () {
+      console.log('stopId changed')
+      console.log(this.$route.params.stopId)
+      this.$store.dispatch('getAllDepartures', this.$route.params.stopId)
+    },
     'lineNumber': (val) => {
-      console.log('dingding', val)
       persistence.set('lineNumber', val)
     }
   },
   created () {
     moment.locale('nb')
-    this.fetchData()
+    console.log(this.$route.params.stopId)
+    if (this.$route.params.stopId) {
+      this.$store.dispatch('getAllDepartures', this.$route.params.stopId)
+    }
+    //this.fetchData()
   }
 }
 </script>

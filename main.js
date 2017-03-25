@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import App from './components/App.vue'
 import VueRouter from 'vue-router'
+import Vuex from 'vuex'
+import store from './store'
 //import Geolocation from 'browser-geolocation'
+
+Vue.use(Vuex)
 
 document.addEventListener('DOMContentLoaded', () => {
   /*var geo = new Geolocation()
@@ -21,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   new Vue({
     render: h => h(App),
-    router: router
+    router,
+    store
   }).$mount('#app')
 })
