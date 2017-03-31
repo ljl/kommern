@@ -37,13 +37,12 @@ export default {
       return this.options.filter((item) => {
         const name = item.Name.toLowerCase()
         const filter = this.filter.toLowerCase()
-        return name.indexOf(filter) != -1
+        return name.indexOf(filter) !== -1
       })
     }
   },
   methods: {
     onEnter (e) {
-      console.log(e.target.blur())
       this.$emit('select', this.items[this.selectedIndex])
       this.filter = this.items[this.selectedIndex].Name
     },

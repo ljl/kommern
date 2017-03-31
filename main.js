@@ -7,10 +7,22 @@ import store from './store'
 
 Vue.use(Vuex)
 
+let swReg = null
+
 document.addEventListener('DOMContentLoaded', () => {
   /*var geo = new Geolocation()
   console.log(geo.isAvailable())
   console.log(geo.start())*/
+
+  navigator.serviceWorker.register('../worker.js', {scope: './'}).then((serviceWorkerRegistration) => {
+    console.log('service worker registered', navigator.serviceWorker)
+    swReg = serviceWorkerRegistration
+    //serviceWorkerRegistration.showNotification('title')
+    return navigator.serviceWorker.ready;
+  }).then(() => {
+    console.log('service worker ready')
+  })
+
   Vue.use(VueRouter)
 
   const router = new VueRouter({

@@ -3,6 +3,7 @@ module.exports = {
   output: {
     filename: 'dist/pwa.bundle.js'
   },
+  devtool: 'cheap-eval-source-map',
   devServer: {
     proxy: {
       '/api/*': {
@@ -21,6 +22,18 @@ module.exports = {
   },
   module: {
     loaders: [
+      {
+        enforce: 'pre',
+        test: /\.js?$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
+      },
+      {
+        enforce: 'pre',
+        test: /\.vue?$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
+      },
       {
         test: /\.js$/,
         exclude: /node_modules/,

@@ -6,21 +6,18 @@
         @select="setSelected">
       </dropdown>
     <departures></departures>
-    <!--routes></routes-->
   </div>
 </template>
 
 <script>
 import Departures from './Departures.vue'
 import Dropdown from './Dropdown.vue'
-import Routes from './Routes.vue'
 import persistence from '../assets/js/persistence'
 
 export default {
   name:'App',
   components: {
     Departures,
-    Routes,
     Dropdown
   },
   data () {

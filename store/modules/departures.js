@@ -13,22 +13,22 @@ const getters = {
 
 // actions
 const actions = {
-  getAllDepartures ({ commit }, stopId) {
-    if (!stopId) return
-    if (!worker)
-    worker = new Worker('../worker/worker.js')
-
-    worker.postMessage({
+  getAllDepartures ({ commit }, options) {
+    if (!options || !options.stopId) return
+    //if (!worker)
+    //worker = new Worker('../worker/worker.js')
+    navigator.serviceWorker.controller.postMessage({
       action: 'init',
-      options: {
-        stopId: stopId
-      }
+      options: options
     })
 
-    worker.addEventListener('message', function(e) {
-      console.log('Worker said: ', e.data)
+    navigator.serviceWorker.addEventListener('message', function(e) {
       commit(types.RECEIVE_DEPARTURES, e.data)
-    }, false)
+    });
+    /*
+    worker.addEventListener('message', function(e) {
+      commit(types.RECEIVE_DEPARTURES, e.data)
+    }, false)*/
   }
 }
 

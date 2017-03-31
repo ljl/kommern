@@ -3,8 +3,7 @@
     <input type="text" v-model="lineNumber" placeholder="Linje" />
     <ul v-if="departures.length > 0">
       <li v-for="departure in departures">
-        {{ departure.MonitoredVehicleJourney.LineRef }} til {{ departure.MonitoredVehicleJourney.DestinationName }} kommer
-        {{ departure.MonitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime | dateTime }}
+        {{ displayDeparture(departure) }}
       <div v-if="departure.Extensions.Deviations.length > 0" class="deviation">
         <span v-for="deviation in departure.Extensions.Deviations">PS: {{ deviation.Header }}</span>
       </div>
@@ -25,7 +24,8 @@ export default {
   name: 'Departures',
   data () {
     return {
-      lineNumber: persistence.get('lineNumber')
+      lineNumber: persistence.get('lineNumber'),
+      lastNotification: ''
     }
   },
   computed: {
@@ -39,24 +39,63 @@ export default {
     }
   },
   methods: {
+    displayDeparture (departure) {
+      if (!departure.MonitoredVehicleJourney) return 'Æsj, det er skjedd en feil'
+      return `${departure.MonitoredVehicleJourney.LineRef} til ${departure.MonitoredVehicleJourney.DestinationName} kommer
+      ${moment(departure.MonitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime).fromNow() }`
+    },
+    notify (message, options) {
+      if (message === this.lastNotification) return
+      this.lastNotification = message
+      if (!('Notification' in window)) {
+        console.error('This browser does not support desktop notification')
+      }
+
+      else if (Notification.permission === 'granted') {
+        var notification = new Notification(message, options)
+      }
+
+      else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+          if (permission === 'granted') {
+            var notification = new Notification(message, options)
+          }
+        });
+      }
+    }
   },
   watch: {
     '$route.params.stopId': function () {
-      console.log('stopId changed')
-      console.log(this.$route.params.stopId)
-      this.$store.dispatch('getAllDepartures', this.$route.params.stopId)
+      console.log('route changed')
+      const params = {}
+      params.stopId = this.$route.params.stopId
+      if (this.lineNumber) {
+        params.lineNumber = this.lineNumber
+      }
+      this.$store.dispatch('getAllDepartures', params)
     },
-    'lineNumber': (val) => {
+    'lineNumber': function (val) {
       persistence.set('lineNumber', val)
+      if (this.$route.params.stopId) {
+        const params = {}
+        params.stopId = this.$route.params.stopId
+        params.lineNumber = this.lineNumber
+        this.$store.dispatch('getAllDepartures', params)
+      }
+    },
+    'departures': function (deps) {
+      const departure = deps[0]
+      const title = `Kommern? Ja ${moment(departure.MonitoredVehicleJourney.MonitoredCall.ExpectedArrivalTime).fromNow()}`
+      const body = `#${departure.MonitoredVehicleJourney.LineRef} til ${departure.MonitoredVehicleJourney.DestinationName}`
+      this.notify(title, {body:body});
     }
   },
   created () {
     moment.locale('nb')
-    console.log(this.$route.params.stopId)
     if (this.$route.params.stopId) {
+      console.log('dispatching action')
       this.$store.dispatch('getAllDepartures', this.$route.params.stopId)
     }
-    //this.fetchData()
   }
 }
 </script>
